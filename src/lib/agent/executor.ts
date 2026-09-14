@@ -11,6 +11,6 @@ export class AgentExecutor {
     }
 
     console.log(`[Executor] Executing authorized ADD_TO_CART for ${auth.productUrl}...`);
-    return AnakinBrowserService.executeAddToCart(auth.productUrl, 'Flipkart');
+    return AnakinBrowserService.executeAddToCart(auth.productUrl, auth.store);
   }
 }

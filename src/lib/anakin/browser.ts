@@ -16,7 +16,7 @@ export class AnakinBrowserService {
    */
   static async executeAddToCart(
     productUrl: string,
-    store: string = 'Flipkart',
+    store: string = '',
   ): Promise<ActResult> {
     const logs: string[] = [];
     const timestamp = new Date().toISOString();
@@ -139,7 +139,7 @@ export class AnakinBrowserService {
     cartUrl: string,
     expectedTitle: string,
     expectedPrice: number,
-    store: string = 'Flipkart',
+    store: string = '',
   ): Promise<VerificationResult> {
     const timestamp = new Date().toISOString();
     let browser: Browser | null = null;

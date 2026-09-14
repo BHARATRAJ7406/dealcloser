@@ -55,6 +55,7 @@ export interface DecisionResult {
 export interface RiskGateAuthorization {
   approved: boolean;
   action: 'ADD_TO_CART';
+  store: string;
   productUrl: string;
   expectedTitle: string;
   expectedPrice: number;

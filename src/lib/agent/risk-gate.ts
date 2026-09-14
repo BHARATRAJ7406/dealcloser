@@ -15,6 +15,7 @@ export class RiskGate {
       return {
         approved: false,
         action: 'ADD_TO_CART',
+        store: candidate.store,
         productUrl: candidate.url,
         expectedTitle: candidate.title,
         expectedPrice: candidate.price,
@@ -30,6 +31,7 @@ export class RiskGate {
       return {
         approved: false,
         action: 'ADD_TO_CART',
+        store: candidate.store,
         productUrl: candidate.url,
         expectedTitle: candidate.title,
         expectedPrice: candidate.price,
@@ -45,6 +47,7 @@ export class RiskGate {
       return {
         approved: false,
         action: 'ADD_TO_CART',
+        store: candidate.store,
         productUrl: candidate.url,
         expectedTitle: candidate.title,
         expectedPrice: candidate.price,
@@ -58,6 +61,7 @@ export class RiskGate {
     return {
       approved: true,
       action: 'ADD_TO_CART',
+      store: candidate.store,
       productUrl: candidate.url,
       expectedTitle: candidate.title,
       expectedPrice: candidate.price,
