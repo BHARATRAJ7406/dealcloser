@@ -65,6 +65,17 @@ export interface RiskGateAuthorization {
   evaluatedAt: string;
 }
 
+export interface CartCookie {
+  name: string;
+  value: string;
+  domain: string;
+  path: string;
+  expires?: number;
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: 'Strict' | 'Lax' | 'None';
+}
+
 export interface ActResult {
   success: boolean;
   action: 'ADD_TO_CART';
@@ -73,6 +84,8 @@ export interface ActResult {
   cartUrl: string;
   timestamp: string;
   logs: string[];
+  /** Shopify/retailer session cookies extracted from ACT browser — forwarded to VERIFY session */
+  cartCookies?: CartCookie[];
   error?: string;
 }
 

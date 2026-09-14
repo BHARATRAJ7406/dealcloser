@@ -1,5 +1,5 @@
-import { chromium, Browser, Page } from 'playwright-core';
-import { ActResult, VerificationResult } from '../types/agent';
+import { chromium, Browser } from 'playwright-core';
+import { ActResult, CartCookie, VerificationResult } from '../types/agent';
 
 function getApiKey(): string {
   return process.env.ANAKIN_API_KEY ?? '';
@@ -95,8 +95,15 @@ export class AnakinBrowserService {
         };
       }
 
-      await page.waitForTimeout(2000);
-      logs.push(`[BrowserAPI] Navigating to retail cart URL: ${cartUrl}`);
+      // Wait for Shopify AJAX cart commit, then extract session cookies before closing.
+      // These are forwarded to the independent VERIFY session so it can see the same cart.
+      await page.waitForTimeout(3000);
+      const allCookies = await context.cookies().catch(() => []);
+      const cartCookies: CartCookie[] = allCookies.filter((c) =>
+        c.domain.includes('blueland') || c.domain.includes('myshopify')
+      );
+      logs.push(`[BrowserAPI] Extracted ${cartCookies.length} Shopify/retailer session cookies for verification pass.`);
+
       await browser.close().catch(() => {});
 
       return {
@@ -105,6 +112,7 @@ export class AnakinBrowserService {
         store,
         productUrl,
         cartUrl,
+        cartCookies,
         timestamp,
         logs,
       };
@@ -140,6 +148,7 @@ export class AnakinBrowserService {
     expectedTitle: string,
     expectedPrice: number,
     store: string = '',
+    cartCookies: CartCookie[] = [],
   ): Promise<VerificationResult> {
     const timestamp = new Date().toISOString();
     let browser: Browser | null = null;
@@ -163,8 +172,14 @@ export class AnakinBrowserService {
       });
 
       const context = browser.contexts()[0] || (await browser.newContext());
+
+      // Inject ACT session cookies so this fresh context can see the same Shopify cart.
+      if (cartCookies.length > 0) {
+        await context.addCookies(cartCookies);
+      }
+
       const page = await context.newPage();
-      await page.goto(cartUrl, { waitUntil: 'domcontentloaded', timeout: 25000 }).catch(() => {});
+      await page.goto(cartUrl, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
       await page.waitForTimeout(3000);
 
       cartPageTitle = await page.title().catch(() => '');

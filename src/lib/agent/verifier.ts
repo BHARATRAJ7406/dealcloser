@@ -16,6 +16,7 @@ export class AgentVerifier {
       auth.expectedTitle,
       auth.expectedPrice,
       actResult.store,
+      actResult.cartCookies ?? [],
     );
   }
 }
