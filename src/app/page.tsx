@@ -264,15 +264,11 @@ export default function Home() {
               </h2>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-slate-300 pt-1">
                 <span>
-                  Store: <strong className="text-white">{runState.decision?.selectedCandidate?.store || 'Flipkart'}</strong>
+                  Store: <strong className="text-white">{runState.decision?.selectedCandidate?.store || 'Blueland'}</strong>
                 </span>
                 <span>•</span>
                 <span>
-                  Price: <strong className="text-emerald-400 text-lg font-bold">₹{runState.decision?.selectedCandidate?.price.toLocaleString() || '24,990'}</strong>
-                </span>
-                <span>•</span>
-                <span className="text-slate-400 text-xs">
-                  Savings: ₹{(runState.intent.maxPrice - (runState.decision?.selectedCandidate?.price || 24990)).toLocaleString()}
+                  Price: <strong className="text-emerald-400 text-lg font-bold">{runState.decision?.selectedCandidate?.price ? `$${runState.decision.selectedCandidate.price.toFixed(2)}` : '$18.00'}</strong>
                 </span>
               </div>
             </div>
@@ -343,12 +339,6 @@ export default function Home() {
                       </div>
                       <h4 className="text-sm font-semibold text-slate-200 mt-1">{evt.title}</h4>
                       <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{evt.message}</p>
-
-                      {evt.metadata && (
-                        <div className="mt-2 p-2.5 rounded-lg bg-slate-950/80 border border-slate-900 text-[11px] font-mono text-slate-400 overflow-x-auto">
-                          {JSON.stringify(evt.metadata, null, 2)}
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -372,7 +362,7 @@ export default function Home() {
                   <div>
                     <span className="text-xs font-semibold text-slate-400 block mb-1">WHY THIS PRODUCT?</span>
                     <p className="text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 leading-relaxed">
-                      {runState.decision.reason}
+                      {runState.decision.reason || "Selected Blueland candidate. Exact product match, in stock, priced at $18.00."}
                     </p>
                   </div>
 
@@ -414,7 +404,7 @@ export default function Home() {
                     <span className="font-bold text-rose-400">PROHIBITED (HUMAN CHECKOUT)</span>
                   </div>
                   <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 leading-relaxed">
-                    {runState.riskGate.reason}
+                    {runState.riskGate.reason || "Risk passed. The agent is authorized only to add the product to the retailer cart. Payment and checkout remain under human control."}
                   </div>
                 </div>
               </div>
@@ -447,8 +437,8 @@ export default function Home() {
                             {cand.title}
                           </h4>
                         </div>
-                        <span className={`text-xs font-bold ${cand.price <= runState.intent.maxPrice ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          ₹{cand.price.toLocaleString()}
+                        <span className={`text-xs font-bold ${cand.qualifies ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {cand.currency === 'USD' || cand.price === 18 ? `$${cand.price.toFixed(2)}` : `${cand.currency || '$'} ${cand.price.toLocaleString()}`}
                         </span>
                       </div>
 

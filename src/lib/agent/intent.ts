@@ -7,9 +7,9 @@ export class IntentParser {
   static parse(input: string, options: Partial<ShoppingIntent> = {}): ShoppingIntent {
     const rawInput = input.trim();
 
-    // Price extraction regex (e.g. under ₹25,000, under 25000, below 30000, max 25k)
+    // Price extraction regex (e.g. under ₹25,000, under 25000, below 30000, max 25k, under $19.99)
     let maxPrice = options.maxPrice ?? 25000;
-    const priceMatch = rawInput.match(/(?:under|below|max|within|less than|<=|₹|\$)\s*([\d,kK]+)/i);
+    const priceMatch = rawInput.match(/(?:under|below|max|within|less than|<=|₹|\$)\s*([\d.,]+[kK]?)/i);
     if (priceMatch && priceMatch[1]) {
       let priceStr = priceMatch[1].replace(/,/g, '');
       if (priceStr.toLowerCase().endsWith('k')) {
@@ -24,7 +24,7 @@ export class IntentParser {
     // Clean product query extraction
     let productQuery = rawInput
       .replace(/(?:find|get|buy|acquire|search for|look for)\s+/i, '')
-      .replace(/(?:under|below|max|within|less than|<=|₹|\$)\s*[\d,kK]+/gi, '')
+      .replace(/(?:under|below|max|within|less than|<=|₹|\$)\s*[\d.,]+[kK]?/gi, '')
       .replace(/(?:and add (?:it )?to (?:my )?cart|add to cart)/gi, '')
       .trim();
 

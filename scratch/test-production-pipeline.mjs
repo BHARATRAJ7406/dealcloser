@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { AgentOrchestrator } from '../src/lib/agent/orchestrator.ts';
 
-// Load .env variables
+// Load .env variables first before importing modules
 const envPath = path.resolve(process.cwd(), '.env');
 const envContent = fs.readFileSync(envPath, 'utf8');
 for (const line of envContent.split('\n')) {
@@ -13,6 +12,7 @@ for (const line of envContent.split('\n')) {
 }
 
 async function testProductionPipeline() {
+  const { AgentOrchestrator } = await import('../src/lib/agent/orchestrator.ts');
   console.log('=== TESTING DEALCLOSER PRODUCTION AGENT ORCHESTRATOR PIPELINE ===');
   const query = 'Find Partake Foods Classic Grahams under $50 and add to cart';
   console.log(`Input Query: "${query}"`);

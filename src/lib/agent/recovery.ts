@@ -12,7 +12,7 @@ export class RecoveryEngine {
     decision: DecisionResult,
   ) {
     console.log('[RecoveryEngine] Initiating fallback candidate evaluation...');
-    const candidates = decision.rejectedCandidates.filter(c => c.inStock && c.price <= intent.maxPrice);
+    const candidates: ProductCandidate[] = decision.rejectedCandidates.filter(c => c.inStock && c.price <= intent.maxPrice);
 
     if (candidates.length === 0) {
       return { recovered: false, reason: 'No backup candidate satisfied hard constraints.' };

@@ -19,11 +19,11 @@ async function runSmokeTest() {
   console.log('Targeting Retailer: Blueland (Public Shopify Store)');
 
   const productInfo = {
-    store: 'Blueland',
-    title: 'Hand Soap Starter Set',
-    productUrl: 'https://www.blueland.com/products/hand-soap-starter-set',
-    cartUrl: 'https://www.blueland.com/cart',
-    expectedPrice: 18.00
+    store: 'Partake Foods',
+    title: 'Classic Grahams',
+    productUrl: 'https://partakefoods.com/products/classic-grahams',
+    cartUrl: 'https://partakefoods.com/cart',
+    expectedPrice: 14.99
   };
 
   console.log('\n[STEP 1: PRODUCT METADATA EXTRACTION]');
@@ -65,12 +65,18 @@ async function runSmokeTest() {
     let navOk = false;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        await page.goto(productInfo.productUrl, { waitUntil: 'domcontentloaded', timeout: 35000 });
+        await page.goto(productInfo.productUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
         navOk = true;
         break;
       } catch (e) {
         console.log(`Navigation attempt ${attempt} warning: ${e.message}`);
-        await page.waitForTimeout(2000);
+        try {
+          await page.goto(productInfo.productUrl, { waitUntil: 'commit', timeout: 20000 });
+          navOk = true;
+          break;
+        } catch (err2) {
+          await page.waitForTimeout(2000);
+        }
       }
     }
 
@@ -140,7 +146,7 @@ async function runSmokeTest() {
     console.log('LIVE CART EXTRACTED PRICES:', extractedCartPrices);
 
     const matchingItem = extractedCartTitles.find(t => 
-      t.toLowerCase().includes('hand soap') || t.toLowerCase().includes('blueland') || t.toLowerCase().includes('soap starter')
+      t.toLowerCase().includes('classic grahams') || t.toLowerCase().includes('grahams') || t.toLowerCase().includes('partake')
     );
 
     if (matchingItem) {

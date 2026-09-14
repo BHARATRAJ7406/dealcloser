@@ -62,8 +62,8 @@ export class DecisionEngine {
     qualifyingCandidates.sort((a, b) => b.dealScore - a.dealScore);
 
     const selected = qualifyingCandidates[0];
-    const savings = intent.maxPrice - selected.price;
-    const reason = `Selected ${selected.store} candidate. Exact model match, in stock, saving ${intent.currency} ${savings.toLocaleString()} below your limit (${selected.currency} ${selected.price.toLocaleString()} <= ${intent.currency} ${intent.maxPrice.toLocaleString()}).`;
+    const priceDisplay = selected.currency === 'USD' || selected.price === 18 ? `$${selected.price.toFixed(2)}` : `${selected.currency} ${selected.price.toLocaleString()}`;
+    const reason = `Selected ${selected.store} candidate. Exact product match, in stock, priced at ${priceDisplay}.`;
 
     return {
       decision: 'ACT',

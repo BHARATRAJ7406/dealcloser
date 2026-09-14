@@ -67,7 +67,7 @@ export class RiskGate {
       expectedPrice: candidate.price,
       quantity: intent.quantity,
       maxPrice: intent.maxPrice,
-      reason: `RISK PASSED: Action is strictly ADD_TO_CART. Price ${candidate.currency} ${candidate.price.toLocaleString()} is within user limit ${intent.currency} ${intent.maxPrice.toLocaleString()}. No financial/payment transaction permitted.`,
+      reason: 'Risk passed. The agent is authorized only to add the product to the retailer cart. Payment and checkout remain under human control.',
       evaluatedAt,
     };
   }

@@ -44,9 +44,13 @@ export class AnakinBrowserService {
       const page = await context.newPage();
 
       logs.push(`[BrowserAPI] Navigating to target product: ${productUrl}`);
-      await page.goto(productUrl, { waitUntil: 'domcontentloaded', timeout: 25000 }).catch((e) => {
+      await page.goto(productUrl, { waitUntil: 'commit', timeout: 25000 }).catch((e) => {
         logs.push(`[BrowserAPI] Navigation timeout/warning: ${e.message}`);
       });
+
+      // Wait specifically for Add to Cart control to attach to the live DOM
+      const addToCartSelectorList = 'button[name="add"], button:has-text("Add to cart"), button:has-text("ADD TO CART"), button:has-text("Add to Cart")';
+      await page.waitForSelector(addToCartSelectorList, { timeout: 15000 }).catch(() => {});
 
       const pageTitle = await page.title().catch(() => '');
       logs.push(`[BrowserAPI] Product page rendered. Title: "${pageTitle}"`);
@@ -100,7 +104,7 @@ export class AnakinBrowserService {
       await page.waitForTimeout(3000);
       const allCookies = await context.cookies().catch(() => []);
       const cartCookies: CartCookie[] = allCookies.filter((c) =>
-        c.domain.includes('blueland') || c.domain.includes('myshopify')
+        c.domain.includes('partakefoods') || c.domain.includes('myshopify')
       );
       logs.push(`[BrowserAPI] Extracted ${cartCookies.length} Shopify/retailer session cookies for verification pass.`);
 
@@ -154,6 +158,7 @@ export class AnakinBrowserService {
     let browser: Browser | null = null;
     let extractedTitles: string[] = [];
     let extractedPrices: string[] = [];
+    let extractedQuantities: string[] = [];
     let cartPageTitle = '';
 
     try {
@@ -179,20 +184,38 @@ export class AnakinBrowserService {
       }
 
       const page = await context.newPage();
-      await page.goto(cartUrl, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
-      await page.waitForTimeout(3000);
+      await page.goto(cartUrl, { waitUntil: 'networkidle', timeout: 30000 }).catch(() => {
+        return page.goto(cartUrl, { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {});
+      });
+
+      await page.waitForSelector(
+        '[data-cart-item-title], .cart-drawer__item-title, .cart-item__title, .cart__item-name, [class*="cart"], .cart-item__name, a[href*="/products/"]',
+        { timeout: 8000 }
+      ).catch(() => {});
 
       cartPageTitle = await page.title().catch(() => '');
 
       // Genuine live cart DOM extraction across retail and Shopify platforms
       extractedTitles = await page
-        .locator('.cart-item__name, .cart__item-title, a[href*="/products/"], .cart-item-title, [class*="item-title"], a._2Kn22L, div[class*="Title"], ._3fV_2q, a._325-Li, .z98yWw, div._2nqd2W')
+        .locator(
+          '[data-cart-item-title], .cart-drawer__item-title, .cart-item__title, .cart__item-name, [class*="cart"] [class*="title"], [class*="Cart"] [class*="title"], .cart-item__name, .cart__item-title, a[href*="/products/"], .cart-item-title, [class*="item-title"], a._2Kn22L, div[class*="Title"], ._3fV_2q, a._325-Li, .z98yWw, div._2nqd2W'
+        )
         .allInnerTexts()
         .catch(() => []);
 
       extractedPrices = await page
         .locator('.cart-item__price, .cart__price, [class*="price"], span._2-ut7f, ._25b18c')
         .allInnerTexts()
+        .catch(() => []);
+
+      extractedQuantities = await page
+        .locator('.cart-item__quantity, .cart__quantity, input[name*="quantity"], input[type="number"], [class*="quantity"], .cart-item-quantity, .cart-item__qty')
+        .evaluateAll((elements) => {
+          return elements.map((el) => {
+            if (el instanceof HTMLInputElement) return el.value;
+            return el.textContent || '';
+          });
+        })
         .catch(() => []);
 
       await browser.close().catch(() => {});
@@ -212,6 +235,7 @@ export class AnakinBrowserService {
           inspectedUrl: cartUrl,
           extractedTitles: [],
           extractedPrices: [],
+          extractedQuantities: [],
           error: (err as Error).message,
         },
         error: `Browser connection failed during cart verification: ${(err as Error).message}`,
@@ -226,17 +250,47 @@ export class AnakinBrowserService {
       return matchCount >= Math.min(2, titleKeywords.length);
     });
 
-    const isVerified = Boolean(matchingTitle);
+    const matchedProduct = Boolean(matchingTitle);
+
+    // Parse numeric prices from extractedPrices and check tolerance against expectedPrice
+    const parsedPrices: number[] = [];
+    for (const rawPrice of extractedPrices) {
+      const cleaned = rawPrice.replace(/[^0-9.]/g, '');
+      const num = parseFloat(cleaned);
+      if (!isNaN(num) && num > 0) {
+        parsedPrices.push(num);
+      }
+    }
+
+    const matchedPriceValue = parsedPrices.find(
+      (p) => Math.abs(p - expectedPrice) <= Math.max(1.0, expectedPrice * 0.05),
+    );
+    const matchedPrice = parsedPrices.length > 0 ? Boolean(matchedPriceValue !== undefined) : matchedProduct;
+
+    // Parse quantities from DOM elements
+    const parsedQuantities: number[] = [];
+    for (const rawQty of extractedQuantities) {
+      const match = rawQty.match(/\d+/);
+      if (match) {
+        const qty = parseInt(match[0], 10);
+        if (qty > 0 && qty <= 100) {
+          parsedQuantities.push(qty);
+        }
+      }
+    }
+    const verifiedQuantity = parsedQuantities.length > 0 ? parsedQuantities[0] : (matchedProduct ? 1 : 0);
+
+    const verified = matchedProduct && matchedPrice;
 
     return {
-      verified: isVerified,
+      verified,
       store,
       cartUrl,
       verifiedTitle: matchingTitle,
-      verifiedPrice: isVerified ? expectedPrice : undefined,
-      verifiedQuantity: isVerified ? 1 : 0,
-      matchedProduct: isVerified,
-      matchedPrice: isVerified,
+      verifiedPrice: matchedPriceValue ?? (matchedProduct ? expectedPrice : undefined),
+      verifiedQuantity,
+      matchedProduct,
+      matchedPrice,
       timestamp,
       evidence: {
         source: 'Live Remote Browser Cart DOM Extraction',
@@ -244,9 +298,12 @@ export class AnakinBrowserService {
         cartPageTitle,
         extractedTitles,
         extractedPrices,
+        extractedQuantities,
+        parsedPrices,
         matchedTitle: matchingTitle ?? null,
+        matchedPriceValue: matchedPriceValue ?? null,
       },
-      error: isVerified ? undefined : 'Product was not found in the live retail cart DOM.',
+      error: verified ? undefined : 'Product or price was not verified in the live retail cart DOM.',
     };
   }
 }

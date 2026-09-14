@@ -186,7 +186,7 @@ export class AgentOrchestrator {
           runId,
           'COMPLETED',
           'DEAL CLOSED & INDEPENDENTLY VERIFIED',
-          `Successfully verified ${decision.selectedCandidate.title} inside ${decision.selectedCandidate.store} cart at ${decision.selectedCandidate.currency} ${decision.selectedCandidate.price.toLocaleString()} (Qty: 1). Checkout link generated!`,
+          `Successfully verified ${decision.selectedCandidate.title} inside ${decision.selectedCandidate.store} cart at ${decision.selectedCandidate.currency} ${decision.selectedCandidate.price.toLocaleString()} (Qty: 1). Verified cart link generated.`,
           'success',
           { verification, checkoutUrl: actResult.cartUrl },
         );
