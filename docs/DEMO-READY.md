@@ -55,7 +55,7 @@ DEAL CLOSED (Present verified cart & checkout URL)
 ## Running the Application Locally
 \`\`\`bash
 # 1. Environment Setup (.env)
-ANAKIN_API_KEY=ask_5347fe446a17cb708786bfd1b22ce6405afe3bbb354da8f6a4478f387bda1cab
+ANAKIN_API_KEY=your_anakin_api_key_here
 ANAKIN_BASE_URL=https://api.anakin.io
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NODE_ENV=development
