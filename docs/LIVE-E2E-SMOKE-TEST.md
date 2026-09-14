@@ -1,7 +1,7 @@
 # Live E2E Smoke Test Audit Results
 
 ## 1. Test Overview
-- **Timestamp**: 2026-09-14T02:49:50.544Z
+- **Timestamp**: 2026-09-14T05:14:56.388Z
 - **Target Retailer**: Partake Foods
 - **Target Product**: Classic Grahams
 - **Product URL**: [Product Page](https://partakefoods.com/products/classic-grahams)
@@ -17,16 +17,16 @@
 | ---- | --------- | --------- | ------ | ------------------------- |
 | **1. Product Discovery** | Product Intelligence | Metadata Extraction | **PASS** | Title: "Classic Grahams" ($14.99) |
 | **2. CDP Browser Connect** | Anakin Browser API | WebSocket Connection (`wss://api.anakin.io/v1/browser-connect`) | **PASS** | Remote browser session established (`X-API-Key` authenticated) |
-| **3. Product Page Nav** | Playwright CDP | Navigate to Product URL | **PASS** | Live DOM Title: "" |
-| **4. Add to Cart (ACT)** | Playwright CDP | Click `button[name="add"]` | **PASS** | Click executed on live DOM |
-| **5. Live Cart DOM Verify** | Playwright CDP | Independent Cart Inspection | **PASS** | Extracted Items: [] |
+| **3. Product Page Nav** | Playwright CDP | Navigate to Product URL | **FAIL** | Live DOM Title: "Page not found" |
+| **4. Add to Cart (ACT)** | Playwright CDP | Click `button[name="add"]` | **FAIL** | Failed to click button |
+| **5. Live Cart DOM Verify** | Playwright CDP | Independent Cart Inspection | **PASS** | Extracted Items: ["ANNOUNCING GIRL SCOUT SPARKABLES™ - AVAILABLE JAN 2027","\n                Vanilla Wafers\n              ","Vanilla Wafers","\n                Classic Grahams\n              ","Classic Grahams","\n                Crunchy Chocolate Chip\n              ","Crunchy Chocolate Chip","\n                Teeny Tiny Crunchy Chocolate Chip\n              ","Teeny Tiny Crunchy Chocolate Chip"] |
 
 ---
 
 ## 3. Results Summary & Certification
 
 1. **Previous Flipkart Test Status**: **INVALID**
-2. **Current Audited E2E Status**: **PASS**
+2. **Current Audited E2E Status**: **FAIL**
 3. **Target Retailer**: **Partake Foods (Shopify Platform)**
 4. **Exact Chain Tested**:
    ```
