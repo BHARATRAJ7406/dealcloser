@@ -19,7 +19,8 @@ export async function POST(req: Request) {
       runId: runState.runId,
       state: runState.state,
       intent: runState.intent,
-      message: 'DealCloser agent initialized and running.',
+      run: runState,
+      message: 'DealCloser agent completed execution.',
     });
   } catch (err) {
     console.error('[API /api/deal Error]:', err);

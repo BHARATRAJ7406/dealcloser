@@ -48,10 +48,12 @@ export class AgentOrchestrator {
     runStore.set(runId, initialState);
     this.addEvent(runId, 'INTENT_RECEIVED', 'Parsed Shopping Intent', `Product: "${intent.productQuery}" | Max Price: ${intent.currency} ${intent.maxPrice.toLocaleString()} | Policy: Auto-Add to Cart`, 'info');
 
-    // Run agent pipeline asynchronously
-    this.executePipeline(runId).catch((err) => {
-      console.error(`[Orchestrator] Run ${runId} unhandled error:`, err);
-    });
+    // Await agent pipeline execution to complete before returning state
+    try {
+      await this.executePipeline(runId);
+    } catch (err) {
+      console.error(`[Orchestrator] Run ${runId} execution error:`, err);
+    }
 
     return runStore.get(runId)!;
   }

@@ -66,6 +66,12 @@ export default function Home() {
       const data = await res.json();
       if (data.success && data.runId) {
         setActiveRunId(data.runId);
+        if (data.run) {
+          setRunState(data.run);
+          if (data.run.state === 'COMPLETED' || data.run.state === 'FAILED') {
+            setIsLoading(false);
+          }
+        }
       } else {
         setIsLoading(false);
         alert(data.error || 'Failed to start agent');
