@@ -1,0 +1,7 @@
+# DealCloser Demo Architecture Options & Rankings
+
+| Option | Architecture Pattern | READ Source | WRITE Source | VERIFY Source | Auth / Session | Parameter Compatibility | Live Test Status | Score (/10) | Recommendation |
+| ------ | -------------------- | ----------- | ------------ | ------------- | -------------- | ----------------------- | ---------------- | ----------- | -------------- |
+| **Option A (Hybrid Wire + Browser API)** | Hybrid | Wire (`fk_search_products` / `walmart_product_details` / `bb_product_pricing`) | Anakin Browser API (`wss://api.anakin.io/v1/browser-connect` Playwright) | Anakin Browser API (Cart DOM extraction) | Session cookies managed via Browser API | 100% Compatible (Product URL / Title / SKU passed seamlessly) | Live Verified | **9.5/10** | **RECOMMENDED FOR HACKATHON WIN** |
+| **Option B (Pure Wire Dumco Chain)** | Pure Wire | Wire (`dmc_get_cart`) | Wire (`dmc_add_to_cart`) | Wire (`dmc_get_cart`) | Requires wholesale `credential_id` identity | Exact Parameter Mapping (`article` -> `quantity`) | Requires active wholesale identity | **7.5/10** | Strong secondary fallback |
+| **Option C (Pure Wire App4Sales Chain)** | Pure Wire | Wire (`a4s_search_products`) | Wire (`a4s_add_to_cart`) | Wire (Browser API Fallback for cart read) | Auth Required | Compatible (`item_code`, `ean`, `quantity`) | Requires credential identity | **7.0/10** | Alternative enterprise option |

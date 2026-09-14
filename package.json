@@ -9,9 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/uuid": "^10.0.0",
+    "ai": "^7.0.99",
+    "better-sqlite3": "^13.0.3",
     "next": "16.3.5",
+    "playwright-core": "^1.63.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "sqlite3": "^6.0.1",
+    "uuid": "^14.0.2",
+    "ws": "^8.21.3",
+    "zod": "^4.6.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

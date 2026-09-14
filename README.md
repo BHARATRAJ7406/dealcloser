@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DealCloser 🚀
 
-## Getting Started
+> *"An autonomous AI agent that doesn't just find the deal. It closes it."*
 
-First, run the development server:
+DealCloser is an autonomous web acquisition agent built for the **Anakin Forge Hackathon 2026**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Traditional price comparison websites stop at **READ → SHOW**. DealCloser completes the full autonomous lifecycle:
+
+```
+INTENT → DISCOVER → READ → REASON → RISK GATE → ACT → VERIFY → RECOVER → COMPLETE
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌟 Why DealCloser is Different
+- **Real Web Action**: Executes authentic `ADD TO CART` mutations on live retail websites via **Anakin Browser API**.
+- **Independent Verification**: Never trusts the add-to-cart API response. Independently navigates to and reads the cart DOM to confirm product title, price, and quantity.
+- **Safety Policy**: Enforces strict financial safety boundaries. Autonomous actions cap at `ADD_TO_CART`; payments and order submissions are strictly prohibited.
+- **Anakin Wire Integration**: Queries catalog metadata and searches live products across 963 catalog entries using `https://api.anakin.io/v1/wire`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Architecture
 
-To learn more about Next.js, take a look at the following resources:
+```
+User Natural Language Intent
+          │
+          ▼
+   [Intent Parser] (Zod schema validation)
+          │
+          ▼
+ [Anakin Wire Discovery] (Catalog & resolve queries)
+          │
+          ▼
+  [Decision Engine] (Hard constraints & deal scoring)
+          │
+          ▼
+     [Risk Gate] (Safety audit & action authorization)
+          │
+          ▼
+[Anakin Browser API (Actor)] (Playwright CDP session)
+          │
+          ▼
+ [Verifier (Cart DOM Read)] (Independent verification pass)
+          │
+          ▼
+ [Deal Closed Checkout Link] (Direct link to verified cart)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Getting Started
 
-## Deploy on Vercel
+### Prerequisites
+- Node.js 18+ / 20+
+- Anakin API Key (`ANAKIN_API_KEY`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Installation & Local Run
+```bash
+# Install dependencies
+npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📄 Documentation
+- [`docs/DEMO-READY.md`](file:///c:/Users/Admin/Desktop/dealcloser/docs/DEMO-READY.md)
+- [`docs/LIVE-E2E-SMOKE-TEST.md`](file:///c:/Users/Admin/Desktop/dealcloser/docs/LIVE-E2E-SMOKE-TEST.md)
+- [`docs/END-TO-END-PROOF.md`](file:///c:/Users/Admin/Desktop/dealcloser/docs/END-TO-END-PROOF.md)
+- [`docs/anakin-capabilities.md`](file:///c:/Users/Admin/Desktop/dealcloser/docs/anakin-capabilities.md)
+
+---
+
+## 🛡️ License
+Built for the **Anakin Forge Hackathon 2026**. All rights reserved.
