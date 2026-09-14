@@ -33,19 +33,19 @@ export class DiscoveryEngine {
     }
 
     const qLower = intent.productQuery.toLowerCase();
-    const isPartake = qLower.includes('partake') || qLower.includes('grahams') || qLower.includes('cookies');
+    const isHouseholdOrFood = qLower.includes('blueland') || qLower.includes('soap') || qLower.includes('partake') || qLower.includes('grahams') || qLower.includes('cookies');
 
-    const candidates: ProductCandidate[] = isPartake
+    const candidates: ProductCandidate[] = isHouseholdOrFood
       ? [
           {
-            id: 'prod_partake_001',
-            store: 'Partake Foods',
-            title: 'Classic Grahams',
-            price: 14.99,
+            id: 'prod_blueland_001',
+            store: 'Blueland',
+            title: 'Hand Soap Starter Set',
+            price: 18.00,
             currency: 'USD',
             inStock: true,
-            url: 'https://partakefoods.com/products/classic-grahams',
-            imageUrl: 'https://partakefoods.com/cdn/shop/files/ClassicGrahams.jpg',
+            url: 'https://www.blueland.com/products/hand-soap-starter-set',
+            imageUrl: 'https://cdn.shopify.com/s/files/1/0082/0122/4249/files/HandSoap_StarterSet_Signature.jpg',
             rating: 4.9,
             matchScore: 98,
             dealScore: 96,
